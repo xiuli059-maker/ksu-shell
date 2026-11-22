@@ -7,10 +7,25 @@ struct HomeView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                Text("KernelSU")
-                    .font(.system(size: 30, weight: .bold))
-                    .foregroundColor(theme.palette.onSurface)
-                    .padding(.top, 8)
+                HStack(alignment: .center) {
+                    Text("KernelSU")
+                        .font(.system(size: 30, weight: .bold))
+                        .foregroundColor(theme.palette.onSurface)
+                    Spacer()
+                    Menu {
+                        Button("重启") { }
+                        Button("重启至 Recovery") { }
+                        Button("重启至 Bootloader") { }
+                        Button("重启至 Download") { }
+                        Button("重启至 EDL") { }
+                        Button("重启用户空间") { }
+                    } label: {
+                        Image(systemName: "power")
+                            .font(.system(size: 20, weight: .medium))
+                            .foregroundColor(theme.palette.onSurface)
+                    }
+                }
+                .padding(.top, 8)
 
                 StatusCard()
 
@@ -18,16 +33,15 @@ struct HomeView: View {
 
                 SupportLinks()
 
-                Spacer(minLength: 110)
+                Spacer(minLength: 60)
             }
             .padding(.horizontal, 12)
         }
-        .background(theme.palette.surface)
+        .background(theme.palette.surface.ignoresSafeArea())
     }
 }
 
-// HomeMiuix.kt StatusCard：深墨绿卡片(0xFF1A3825)，右下 110dp 大对勾(0xFF36D167) offset(27,31)，
-// 左上「工作中」22sp SemiBold +「版本 xxx-uapi」15sp，左下工作模式「LKM」16sp Medium
+// HomeMiuix.kt StatusCard：深墨绿卡片，右下 110dp 大对勾，工作中 22sp + 版本 15sp + 自定义标签 + LKM 16sp
 struct StatusCard: View {
     @EnvironmentObject var theme: ThemeManager
 
@@ -54,9 +68,16 @@ struct StatusCard: View {
                 Text("工作中")
                     .font(.system(size: 22, weight: .semibold))
                     .foregroundColor(onCard)
-                Text("版本 32525-2")
-                    .font(.system(size: 15))
-                    .foregroundColor(onCard)
+                HStack(spacing: 8) {
+                    Text("版本 35833-6")
+                        .font(.system(size: 15))
+                        .foregroundColor(onCard)
+                    StatusTag(
+                        text: "自定义",
+                        background: theme.isDark ? Color(hex: 0x315D3E) : Color(hex: 0xB8E8C5),
+                        foreground: theme.isDark ? Color(hex: 0xB8E8C5) : Color(hex: 0x164A29)
+                    )
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .padding(.leading, 16)
@@ -69,7 +90,6 @@ struct StatusCard: View {
     }
 }
 
-// HomeMiuix.kt InfoCard：Card + padding16，每行 icon 24 + 标题 headline1(20sp)Medium + 值 body2(14sp)，行底距 24
 struct InfoCard: View {
     @EnvironmentObject var theme: ThemeManager
     let info: SystemInfo
@@ -77,13 +97,13 @@ struct InfoCard: View {
     var body: some View {
         VStack(spacing: 12) {
             card {
-                infoRow(icon: "tag", title: "管理器版本", value: info.managerVersion)
-                infoRow(icon: "cpu", title: "内核版本", value: info.kernelVersion)
+                infoRow(icon: "tag.fill", title: "管理器版本", value: info.managerVersion)
+                infoRow(icon: "cpu.fill", title: "内核版本", value: info.kernelVersion)
                 infoRow(icon: "iphone", title: "设备型号", value: info.deviceModel)
                 infoRow(icon: "touchid", title: "系统指纹", value: info.fingerprint, last: true)
             }
             card {
-                infoRow(icon: "lock.shield", title: "SELinux 状态", value: info.selinux)
+                infoRow(icon: "checkmark.shield", title: "SELinux 状态", value: info.selinux)
                 infoRow(icon: "line.3.horizontal.decrease", title: "Seccomp 状态", value: info.seccomp, last: true)
             }
         }
@@ -118,15 +138,14 @@ struct InfoCard: View {
     }
 }
 
-// HomeMiuix.kt SupportLinks：Card 内两个 ArrowPreference
 struct SupportLinks: View {
     @EnvironmentObject var theme: ThemeManager
 
     var body: some View {
         VStack(spacing: 0) {
-            supportRow(icon: "hand.raised", title: "支持开发", summary: "KernelSU 将保持免费开源，向开发者捐赠以表示支持")
+            supportRow(icon: "hands.and.sparkles.fill", title: "支持开发", summary: "KernelSU 将保持免费开源，向开发者捐赠以表示支持")
             Divider().overlay(theme.palette.outline.opacity(0.15)).padding(.leading, 46)
-            supportRow(icon: "book", title: "了解 KernelSU", summary: "了解如何安装 KernelSU 以及如何开发模块")
+            supportRow(icon: "book.fill", title: "了解 KernelSU", summary: "了解如何安装 KernelSU 以及如何开发模块")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 4)
