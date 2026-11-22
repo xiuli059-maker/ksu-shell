@@ -5,6 +5,16 @@ struct RootView: View {
     @EnvironmentObject var appState: AppState
     @State private var selection = 0
 
+    private var appBackground: some View {
+        ZStack {
+            Color(hex: 0x0E0F13)
+            Circle().fill(Color(hex: 0x2B5CA6)).frame(width: 440, height: 440).blur(radius: 130).offset(x: -120, y: -260)
+            Circle().fill(Color(hex: 0x8C3D8C)).frame(width: 380, height: 380).blur(radius: 120).offset(x: 150, y: 140)
+            Circle().fill(Color(hex: 0x2E8C6A)).frame(width: 340, height: 340).blur(radius: 110).offset(x: -90, y: 320)
+        }
+        .ignoresSafeArea()
+    }
+
     @ViewBuilder private var pages: some View {
         if theme.enableSwipeDismiss {
             TabView(selection: $selection) {
@@ -28,6 +38,7 @@ struct RootView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
+            appBackground
             pages
             if theme.enableFloatingBar {
                 GlassBottomBar(selection: $selection, floating: true)
@@ -37,7 +48,6 @@ struct RootView: View {
                 GlassBottomBar(selection: $selection, floating: false)
             }
         }
-        .background(theme.palette.surface.ignoresSafeArea())
         .fullScreenCover(item: Binding(get: { appState.route }, set: { appState.route = $0 })) { route in
             ScreenHost(route: route)
                 .environmentObject(theme)
