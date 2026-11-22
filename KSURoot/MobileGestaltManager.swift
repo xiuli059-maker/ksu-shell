@@ -1,6 +1,5 @@
 import Foundation
 import UIKit
-import Security
 
 struct BackupItem: Identifiable {
     let id = UUID()
@@ -17,11 +16,7 @@ final class MobileGestaltManager: ObservableObject {
 
     // 读取当前签名里实际的 App Group（自动适配你证书的 group）
     static func signedAppGroups() -> [String] {
-        guard let task = SecTaskCreateFromSelf(nil),
-              let val = SecTaskCopyValueForEntitlement(task, "com.apple.security.application-groups" as CFString, nil) else {
-            return []
-        }
-        return (val as? [String]) ?? []
+        return WQSignedAppGroups()
     }
 
     private var effectiveGroup: String {
