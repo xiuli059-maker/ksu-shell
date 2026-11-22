@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject var theme: ThemeManager
+    @EnvironmentObject var appState: AppState
     @State private var selection = 0
 
     @ViewBuilder private var pages: some View {
@@ -42,6 +43,11 @@ struct RootView: View {
             }
         }
         .background(theme.palette.surface.ignoresSafeArea())
+        .fullScreenCover(item: Binding(get: { appState.route }, set: { appState.route = $0 })) { route in
+            ScreenHost(route: route)
+                .environmentObject(theme)
+                .environmentObject(appState)
+        }
     }
 }
 
