@@ -52,6 +52,7 @@ struct GlassBottomBar: View {
     @Binding var selection: Int
     var floating: Bool = false
     @Namespace private var ns
+    @State private var barWidth: CGFloat = 0
 
     private let items: [(title: String, icon: String)] = [
         ("主页", "house.fill"),
@@ -99,6 +100,22 @@ struct GlassBottomBar: View {
                 .buttonStyle(.plain)
             }
         }
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .onAppear { barWidth = geo.size.width }
+                    .onChange(of: geo.size.width) { w in barWidth = w }
+            }
+        )
+        .gesture(
+            DragGesture(minimumDistance: 3)
+                .onChanged { v in
+                    guard barWidth > 1 else { return }
+                    let tw = barWidth / CGFloat(items.count)
+                    let idx = min(items.count - 1, max(0, Int(v.location.x / tw)))
+                    if idx != selection { selection = idx }
+                }
+        )
     }
 
     private var floatingBar: some View {
