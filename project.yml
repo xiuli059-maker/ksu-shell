@@ -16,11 +16,11 @@ targets:
       - KSURoot
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.ksuroot
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.ksuroot.iphone
         PRODUCT_NAME: KSURoot
         INFOPLIST_FILE: KSURoot/Info.plist
         GENERATE_INFOPLIST_FILE: "NO"
-        TARGETED_DEVICE_FAMILY: "1,2"
+        TARGETED_DEVICE_FAMILY: "1"
         IPHONEOS_DEPLOYMENT_TARGET: "15.0"
         CODE_SIGN_STYLE: "Automatic"
         SWIFT_OBJC_BRIDGING_HEADER: KSURoot/KSURoot-Bridging-Header.h
