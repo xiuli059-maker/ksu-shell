@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject var theme: ThemeManager
     private let info = MockData.systemInfo
 
     var body: some View {
@@ -34,17 +35,19 @@ struct HomeView: View {
             }
             .padding(.horizontal, 16)
         }
-        .background(Theme.surface.ignoresSafeArea())
+        .background(theme.palette.surface.ignoresSafeArea())
     }
 }
 
 struct StatusCard: View {
+    @EnvironmentObject var theme: ThemeManager
+
     var body: some View {
         ZStack(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(
                     LinearGradient(
-                        colors: [Color(hex: 0x1B3A20), Color(hex: 0x35633A)],
+                        colors: [theme.palette.secondaryContainer, theme.palette.primaryContainer],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -52,21 +55,21 @@ struct StatusCard: View {
 
             ZStack {
                 Circle()
-                    .stroke(Theme.primary.opacity(0.5), lineWidth: 13)
+                    .stroke(theme.palette.primary.opacity(0.5), lineWidth: 13)
                     .frame(width: 128, height: 128)
                 Image(systemName: "checkmark")
                     .font(.system(size: 58, weight: .bold))
-                    .foregroundColor(Theme.primary)
+                    .foregroundColor(theme.palette.primary)
             }
             .offset(x: 78, y: 66)
 
             VStack(alignment: .leading, spacing: 6) {
                 Text("工作中 <LKM>")
                     .font(.system(size: 21, weight: .bold))
-                    .foregroundColor(.white)
-                Text("版本: 32525-null")
+                    .foregroundColor(theme.palette.onSecondaryContainer)
+                Text("版本: 32525-2")
                     .font(.system(size: 14))
-                    .foregroundColor(.white.opacity(0.85))
+                    .foregroundColor(theme.palette.onSecondaryContainer.opacity(0.85))
                 Spacer()
             }
             .padding(18)
@@ -77,6 +80,7 @@ struct StatusCard: View {
 }
 
 struct StatCard: View {
+    @EnvironmentObject var theme: ThemeManager
     let title: String
     let value: String
 
@@ -84,15 +88,15 @@ struct StatCard: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.system(size: 16))
-                .foregroundColor(Theme.onSurfaceVariant)
+                .foregroundColor(theme.palette.onSurfaceVariant)
             Spacer(minLength: 0)
             Text(value)
                 .font(.system(size: 36, weight: .bold))
-                .foregroundColor(Theme.onSurface)
+                .foregroundColor(theme.palette.onSurface)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .padding(16)
-        .background(Theme.surfaceBright)
+        .background(theme.palette.surfaceBright)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
