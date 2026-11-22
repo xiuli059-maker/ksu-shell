@@ -3,6 +3,7 @@ import SwiftUI
 // 对照 SettingsMaterial.kt + SettingsUiState.kt：完整设置项，含液态玻璃/浮动底栏/滑动返回/预测返回等开关
 struct SettingsView: View {
     @EnvironmentObject var theme: ThemeManager
+    @EnvironmentObject var appState: AppState
     @State private var showAbout = false
 
     @State private var checkUpdate = true
@@ -124,6 +125,15 @@ struct SettingsView: View {
                     SegmentedColumn {
                         SegmentedRow(icon: "ladybug", title: "发送日志", action: { })
                         SegmentedRow(icon: "info.circle", title: "关于", action: { showAbout = true })
+                    }
+
+                    SegmentedColumn(title: "全部页面") {
+                        ForEach([AppRoute.install, .flash, .moduleRepo, .scriptRun, .executeModuleAction,
+                                 .appProfile, .template, .templateEditor, .sulog, .colorPalette, .about], id: \.self) { r in
+                            SegmentedLinkRow(icon: "doc", title: r.title, subtitle: "") {
+                                appState.route = r
+                            }
+                        }
                     }
 
                     Text("本应用仅作 UI 移植展示，不含任何 Root / 越狱 / 系统修改功能。")
