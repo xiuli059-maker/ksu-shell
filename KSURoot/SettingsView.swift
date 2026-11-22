@@ -130,7 +130,7 @@ struct SettingsView: View {
                 .padding(.bottom, 110)
             }
         }
-        .background(Color.clear)
+        .background(theme.palette.surface)
         .sheet(isPresented: $showAbout) { AboutView() }
     }
 
