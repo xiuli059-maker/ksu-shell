@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 struct SystemInfo {
     var managerVersion: String
@@ -81,9 +82,9 @@ enum MockData {
     static var systemInfo: SystemInfo {
         SystemInfo(
             managerVersion: "v3.2.5 (32525-2)",
-            kernelVersion: "0",
+            kernelVersion: "iOS \(UIDevice.current.systemVersion)",
             deviceModel: DeviceInfo.modelName,
-            fingerprint: "???",
+            fingerprint: "Apple",
             selinux: "宽容模式",
             seccomp: "严格模式"
         )
