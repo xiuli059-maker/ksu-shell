@@ -90,6 +90,25 @@ enum MockData {
         )
     }
 
-    static let apps: [AppEntry] = []
-    static let modules: [ModuleEntry] = []
+    static let apps: [AppEntry] = [
+        AppEntry(name: "GestaltX", packageName: "com.huamidev.gestaltx", allowSu: true),
+        AppEntry(name: "worse_query", packageName: "com.forcequitOS.worsequery", allowSu: true),
+        AppEntry(name: "Erosion", packageName: "party.jailbreakdotparty.erosion", allowSu: true),
+        AppEntry(name: "3106", packageName: "backup.3106", allowSu: true)
+    ]
+
+    static let modules: [ModuleEntry] = [
+        ModuleEntry(name: "GestaltX", version: "1.0.5", author: "huamidev",
+                    detail: "MobileGestalt 编辑器 · iOS 27.x · 基于 worse_query",
+                    enabled: true, hasWebUi: false, hasAction: false, hasUpdate: false, meta: false, markedRemove: false),
+        ModuleEntry(name: "worse_query", version: "PoC", author: "forcequitOS",
+                    detail: "iOS 26/27 沙盒逃逸（容器访问 PoC）",
+                    enabled: true, hasWebUi: false, hasAction: false, hasUpdate: false, meta: false, markedRemove: false),
+        ModuleEntry(name: "Erosion", version: "0.3.1", author: "jailbreakdotparty",
+                    detail: "iOS 定制工具箱 · 基于 worse_query",
+                    enabled: true, hasWebUi: false, hasAction: false, hasUpdate: false, meta: false, markedRemove: false),
+        ModuleEntry(name: "3106", version: "-", author: "-",
+                    detail: "备份",
+                    enabled: false, hasWebUi: false, hasAction: false, hasUpdate: false, meta: true, markedRemove: false)
+    ]
 }
