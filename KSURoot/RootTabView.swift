@@ -27,19 +27,14 @@ struct RootView: View {
     }
 
     var body: some View {
-        Group {
+        ZStack(alignment: .bottom) {
+            pages
             if theme.enableFloatingBar {
-                ZStack(alignment: .bottom) {
-                    pages
-                    GlassBottomBar(selection: $selection, floating: true)
-                        .padding(.horizontal, 28)
-                        .padding(.bottom, 6)
-                }
+                GlassBottomBar(selection: $selection, floating: true)
+                    .padding(.horizontal, 28)
+                    .padding(.bottom, 6)
             } else {
-                VStack(spacing: 0) {
-                    pages
-                    GlassBottomBar(selection: $selection, floating: false)
-                }
+                GlassBottomBar(selection: $selection, floating: false)
             }
         }
         .background(theme.palette.surface.ignoresSafeArea())
