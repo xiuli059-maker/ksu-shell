@@ -21,7 +21,7 @@ struct ModuleView: View {
                 }
             }
         }
-        .background(theme.palette.surface.ignoresSafeArea())
+        .background(Color.clear)
     }
 }
 
