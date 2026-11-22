@@ -110,7 +110,7 @@ struct SettingsView: View {
 
                     SegmentedColumn {
                         SegmentedRow(icon: "ladybug", title: "发送日志", action: { })
-                        SegmentedRow(icon: "info.circle", title: "关于", action: { showAbout = true })
+                        SegmentedRow(icon: "info.circle", title: "关于", action: { appState.route = .about })
                     }
 
                     SegmentedColumn(title: "所有页面") {
