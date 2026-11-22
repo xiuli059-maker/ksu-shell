@@ -6,7 +6,7 @@ struct HomeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 13) {
+            VStack(alignment: .leading, spacing: 12) {
                 LargeTitle(text: "KernelSU")
 
                 StatusCard()
@@ -30,38 +30,49 @@ struct HomeView: View {
 
                 Spacer(minLength: 24)
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 12)
         }
         .background(theme.palette.surface.ignoresSafeArea())
     }
 }
 
-// 对应 HomeMaterial.kt 的 StatusCard：横向 ListItem（对勾图标 + 工作中 + 版本副文字 + 工作模式标签）
+// 对应 HomeMiuix.kt 的 StatusCard：Card 深墨绿(0xFF1A3825) / 浅绿(0xFFDFFAE4)，对勾 + 工作中 + 版本 + 工作模式标签
 struct StatusCard: View {
     @EnvironmentObject var theme: ThemeManager
 
+    private var cardBackground: Color {
+        theme.isDark ? Color(hex: 0x1A3825) : Color(hex: 0xDFFAE4)
+    }
+    private var onCard: Color {
+        theme.isDark ? Color(hex: 0xDFFAE4) : Color(hex: 0x0B3A16)
+    }
+
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 14) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 28))
-                .foregroundColor(theme.palette.onSecondaryContainer)
+                .font(.system(size: 26))
+                .foregroundColor(theme.isDark ? Color(hex: 0x7EE08A) : Color(hex: 0x1E7B3C))
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("工作中")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(theme.palette.onSecondaryContainer)
+                    .foregroundColor(onCard)
                 Text("版本 32525-2")
-                    .font(.system(size: 14))
-                    .foregroundColor(theme.palette.onSecondaryContainer.opacity(0.75))
+                    .font(.system(size: 13))
+                    .foregroundColor(onCard.opacity(0.7))
             }
 
             Spacer(minLength: 8)
 
-            StatusTag(text: "LKM", background: theme.palette.primary, foreground: theme.palette.onPrimary)
+            StatusTag(
+                text: "LKM",
+                background: theme.isDark ? Color(hex: 0x2C5A30) : Color(hex: 0xBCF0B4),
+                foreground: onCard
+            )
         }
         .padding(16)
         .frame(maxWidth: .infinity)
-        .background(theme.palette.secondaryContainer)
+        .background(cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
 }
