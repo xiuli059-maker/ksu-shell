@@ -106,65 +106,45 @@ struct GlassBottomBar: View {
         }
     }
 
-    private var indicator: some View {
-        Capsule()
-            .fill(Color.white.opacity(0.08))
-            .overlay(
-                Capsule().fill(
-                    LinearGradient(
-                        colors: [Color.white.opacity(0.28), Color.clear],
-                        startPoint: .top, endPoint: .center
+    @ViewBuilder private var indicator: some View {
+        if #available(iOS 26.0, *) {
+            Color.clear
+                .glassEffect(.regular.interactive(), in: .capsule)
+                .padding(.vertical, 3)
+                .padding(.horizontal, 2)
+        } else {
+            Capsule()
+                .fill(Color.white.opacity(0.08))
+                .overlay(
+                    Capsule().fill(
+                        LinearGradient(colors: [Color.white.opacity(0.28), Color.clear], startPoint: .top, endPoint: .center)
                     )
                 )
-            )
-            .overlay(
-                Capsule().stroke(
-                    LinearGradient(
-                        colors: [Color.white.opacity(0.7), Color.white.opacity(0.1)],
-                        startPoint: .top, endPoint: .bottom
-                    ),
-                    lineWidth: 0.8
+                .overlay(
+                    Capsule().stroke(
+                        LinearGradient(colors: [Color.white.opacity(0.7), Color.white.opacity(0.1)], startPoint: .top, endPoint: .bottom),
+                        lineWidth: 0.8
+                    )
                 )
-            )
-            .padding(.vertical, 3)
-            .padding(.horizontal, 2)
+                .padding(.vertical, 3)
+                .padding(.horizontal, 2)
+        }
     }
 
-    private var floatingBar: some View {
-        core
-            .background(.ultraThinMaterial, in: Capsule())
-            .overlay(
-                Capsule()
-                    .fill(
-                        LinearGradient(
-                            stops: [
-                                .init(color: Color.white.opacity(0.30), location: 0.0),
-                                .init(color: Color.white.opacity(0.05), location: 0.42),
-                                .init(color: Color.clear, location: 0.78)
-                            ],
-                            startPoint: .top, endPoint: .bottom
-                        )
+    @ViewBuilder private var floatingBar: some View {
+        if #available(iOS 26.0, *) {
+            core.glassEffect(.regular, in: .capsule)
+        } else {
+            core
+                .background(.ultraThinMaterial, in: Capsule())
+                .overlay(
+                    Capsule().stroke(
+                        LinearGradient(colors: [Color.white.opacity(0.75), Color.white.opacity(0.08), Color.black.opacity(0.25)], startPoint: .top, endPoint: .bottom),
+                        lineWidth: 1
                     )
-                    .allowsHitTesting(false)
-            )
-            .overlay(
-                Capsule().stroke(
-                    LinearGradient(
-                        colors: [Color.white.opacity(0.75), Color.white.opacity(0.08), Color.black.opacity(0.25)],
-                        startPoint: .top, endPoint: .bottom
-                    ),
-                    lineWidth: 1
                 )
-            )
-            .overlay(
-                Capsule()
-                    .stroke(Color.black.opacity(0.30), lineWidth: 8)
-                    .blur(radius: 6)
-                    .offset(y: 2)
-                    .mask(Capsule())
-                    .allowsHitTesting(false)
-            )
-            .shadow(color: .black.opacity(0.38), radius: 26, y: 10)
+                .shadow(color: .black.opacity(0.38), radius: 26, y: 10)
+        }
     }
 
     private var dockedBar: some View {
