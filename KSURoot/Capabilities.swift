@@ -1,6 +1,46 @@
 import Foundation
 
-enum CapabilityCategory: String, CaseIterable, Identifiable {
+enum GestaltKeys {
+    static let modelNumber = "97JDvERpVwO+GHtthIh7hA"
+    static let regionCode = "h63QSdBCiT/z0WU6rdQv6Q"
+    static let regionInfo = "zHeENZu+wbg7PUprwNwBWg"
+}
+
+struct ModelPreset: Identifiable {
+    let id: String
+    let title: String
+    let value: String
+    static let all: [ModelPreset] = [
+        .init(id: "A3472", title: "A3472 · 18 Pro 美国", value: "A3472"),
+        .init(id: "A3713", title: "A3713 · 18 Pro 加/日", value: "A3713"),
+        .init(id: "A3714", title: "A3714 · 18 Pro 其他地区", value: "A3714"),
+        .init(id: "A3715", title: "A3715 · 18 Pro 中国大陆", value: "A3715"),
+        .init(id: "A3473", title: "A3473 · 18 Pro Max 美国", value: "A3473"),
+        .init(id: "A3716", title: "A3716 · 18 Pro Max 加/日", value: "A3716"),
+        .init(id: "A3717", title: "A3717 · 18 Pro Max 其他地区", value: "A3717"),
+        .init(id: "A3718", title: "A3718 · 18 Pro Max 中国大陆", value: "A3718"),
+        .init(id: "A3260", title: "A3260 · Air 美/加", value: "A3260"),
+        .init(id: "A3516", title: "A3516 · Air 日本", value: "A3516"),
+        .init(id: "A3517", title: "A3517 · Air 其他地区", value: "A3517"),
+        .init(id: "A3518", title: "A3518 · Air 中国大陆", value: "A3518")
+    ]
+}
+
+struct RegionPreset: Identifiable {
+    let id: String
+    let title: String
+    let code: String
+    let info: String
+    static let all: [RegionPreset] = [
+        .init(id: "US", title: "美国 LL", code: "LL", info: "LL/A"),
+        .init(id: "HK", title: "香港 ZA", code: "ZA", info: "ZA/A"),
+        .init(id: "JP", title: "日本 J", code: "J", info: "J/A"),
+        .init(id: "CN", title: "中国大陆 CH", code: "CH", info: "CH/A"),
+        .init(id: "TW", title: "台湾 TA", code: "TA", info: "TA/A"),
+        .init(id: "UK", title: "英国 B", code: "B", info: "B/A"),
+        .init(id: "CA", title: "加拿大 C", code: "C", info: "C/A")
+    ]
+}
     case display = "显示"
     case device = "设备"
     case ipad = "iPad"
