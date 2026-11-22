@@ -1,6 +1,6 @@
 import SwiftUI
 
-// 对照 SettingsMaterial.kt：完整设置项，每项对应源码 Icons.Filled.*
+// 对照 SettingsMaterial.kt + SettingsUiState.kt：完整设置项，含液态玻璃/浮动底栏/滑动返回/预测返回等开关
 struct SettingsView: View {
     @EnvironmentObject var theme: ThemeManager
     @State private var showAbout = false
@@ -29,6 +29,57 @@ struct SettingsView: View {
                     .padding(.bottom, 6)
 
                 VStack(spacing: 13) {
+                    // 外观
+                    SegmentedColumn {
+                        SegmentedSwitchRow(icon: "drop.fill", title: "液态玻璃",
+                                           subtitle: "启用界面模糊 / 液态玻璃效果", isOn: bind(\.enableBlur))
+                        SegmentedSwitchRow(icon: "rectangle.bottomthird.inset.filled", title: "浮动底栏",
+                                           subtitle: "底栏悬浮显示（否则贴底）", isOn: bind(\.enableFloatingBar))
+                        SegmentedSwitchRow(icon: "circle.lefthalf.filled", title: "浮动底栏模糊",
+                                           subtitle: "浮动底栏启用玻璃模糊", isOn: bind(\.enableFloatingBarBlur))
+                        SegmentedSwitchRow(icon: "circle.grid.2x1", title: "导航徽章",
+                                           subtitle: "在底栏显示数量徽章", isOn: bind(\.enableNavBadge))
+                    }
+
+                    // 交互
+                    SegmentedColumn {
+                        SegmentedSwitchRow(icon: "hand.draw", title: "滑动返回",
+                                           subtitle: "允许左右滑动切换页面", isOn: bind(\.enableSwipeDismiss))
+                        SegmentedSwitchRow(icon: "arrow.uturn.backward", title: "预测返回",
+                                           subtitle: "启用预测性返回手势", isOn: bind(\.enablePredictiveBack))
+                        SegmentedRow(icon: "textformat.size", title: "页面缩放",
+                                     subtitle: "\(Int(theme.pageScale * 100))%",
+                                     trailing: AnyView(
+                                        Stepper("", value: Binding(
+                                            get: { theme.pageScale },
+                                            set: { theme.pageScale = min(1.5, max(0.7, $0)) }
+                                        ), in: 0.7...1.5, step: 0.05)
+                                        .labelsHidden()
+                                     ))
+                        SegmentedRow(icon: "text.alignleft", title: "模块描述行数",
+                                     subtitle: "\(theme.moduleDescMaxLines)",
+                                     trailing: AnyView(
+                                        Stepper("", value: Binding(
+                                            get: { theme.moduleDescMaxLines },
+                                            set: { theme.moduleDescMaxLines = min(20, max(1, $0)) }
+                                        ), in: 1...20)
+                                        .labelsHidden()
+                                     ))
+                    }
+
+                    // 主题
+                    SegmentedColumn {
+                        SegmentedRow(icon: "display", title: "界面模式",
+                                     subtitle: theme.uiMode == 0 ? "Material 3" : "Miuix",
+                                     trailing: AnyView(modeMenu))
+                        SegmentedRow(icon: theme.isDark ? "moon.fill" : "sun.max.fill", title: "主题",
+                                     subtitle: theme.modeName, trailing: AnyView(darkMenu))
+                        SegmentedRow(icon: "paintpalette", title: "主题色",
+                                     subtitle: (Seed(rawValue: theme.seed) ?? .green).name,
+                                     trailing: AnyView(seedPicker))
+                    }
+
+                    // 更新
                     SegmentedColumn {
                         SegmentedSwitchRow(icon: "arrow.triangle.2.circlepath", title: "检查更新",
                                            subtitle: "启动时检查 KernelSU 管理器更新", isOn: $checkUpdate)
@@ -36,24 +87,10 @@ struct SettingsView: View {
                                            subtitle: "定期检查已安装模块的更新", isOn: $checkModuleUpdate)
                     }
 
-                    SegmentedColumn {
-                        SegmentedRow(icon: "display", title: "界面模式",
-                                     subtitle: theme.uiMode == 0 ? "Material 3" : "Miuix",
-                                     trailing: AnyView(modeMenu))
-                        SegmentedRow(icon: theme.isDark ? "moon.fill" : "sun.max.fill", title: "主题",
-                                     subtitle: theme.modeName,
-                                     trailing: AnyView(darkMenu))
-                        SegmentedRow(icon: "paintpalette", title: "主题色",
-                                     subtitle: (Seed(rawValue: theme.seed) ?? .green).name,
-                                     trailing: AnyView(seedPicker))
-                    }
-
+                    // 内核功能
                     SegmentedColumn {
                         SegmentedSwitchRow(icon: "doc.text", title: "配置模板",
                                            subtitle: "为应用配置 UID / 挂载模板", isOn: $profileTemplate)
-                    }
-
-                    SegmentedColumn {
                         SegmentedRow(icon: "shield.lefthalf.filled", title: "su 兼容模式",
                                      subtitle: "默认启用", trailing: AnyView(sucompatMenu))
                         SegmentedSwitchRow(icon: "square.stack.3d.up.slash", title: "内核级卸载",
@@ -70,6 +107,7 @@ struct SettingsView: View {
                                            subtitle: "使用软重启替代完整重启", isOn: $softReboot)
                     }
 
+                    // 其他
                     SegmentedColumn {
                         SegmentedSwitchRow(icon: "list.bullet", title: "默认卸载模块",
                                            subtitle: "对应用默认卸载 KernelSU 模块", isOn: $defaultUmount)
@@ -84,7 +122,7 @@ struct SettingsView: View {
                     }
 
                     SegmentedColumn {
-                        SegmentedRow(icon: "info.circle", title: "发送日志", action: { })
+                        SegmentedRow(icon: "ladybug", title: "发送日志", action: { })
                         SegmentedRow(icon: "info.circle", title: "关于", action: { showAbout = true })
                     }
 
@@ -99,18 +137,18 @@ struct SettingsView: View {
             }
         }
         .background(theme.palette.surface.ignoresSafeArea())
-        .sheet(isPresented: $showAbout) {
-            AboutView()
-        }
+        .sheet(isPresented: $showAbout) { AboutView() }
+    }
+
+    private func bind(_ keyPath: ReferenceWritableKeyPath<ThemeManager, Bool>) -> Binding<Bool> {
+        Binding(get: { theme[keyPath: keyPath] }, set: { theme[keyPath: keyPath] = $0 })
     }
 
     private var modeMenu: some View {
         Menu {
             Button("Material 3") { theme.setUiMode(0) }
             Button("Miuix") { theme.setUiMode(1) }
-        } label: {
-            menuLabel(theme.uiMode == 0 ? "Material 3" : "Miuix")
-        }
+        } label: { menuLabel(theme.uiMode == 0 ? "Material 3" : "Miuix") }
     }
 
     private var darkMenu: some View {
@@ -118,9 +156,7 @@ struct SettingsView: View {
             Button("深色") { theme.isDark = true; theme.amoled = false }
             Button("浅色") { theme.isDark = false; theme.amoled = false }
             Button("AMOLED 黑") { theme.isDark = true; theme.amoled = true }
-        } label: {
-            menuLabel(theme.modeName)
-        }
+        } label: { menuLabel(theme.modeName) }
     }
 
     private var sucompatMenu: some View {
@@ -128,9 +164,7 @@ struct SettingsView: View {
             Button("默认启用") { }
             Button("重启前禁用") { }
             Button("始终禁用") { }
-        } label: {
-            menuLabel("默认启用")
-        }
+        } label: { menuLabel("默认启用") }
     }
 
     private func menuLabel(_ text: String) -> some View {
