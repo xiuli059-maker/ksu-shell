@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RootView: View {
+    @EnvironmentObject var theme: ThemeManager
     @State private var selection = 0
 
     var body: some View {
@@ -14,11 +15,12 @@ struct RootView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             BottomBar(selection: $selection)
         }
-        .background(Theme.surface.ignoresSafeArea())
+        .background(theme.palette.surface.ignoresSafeArea())
     }
 }
 
 struct BottomBar: View {
+    @EnvironmentObject var theme: ThemeManager
     @Binding var selection: Int
 
     private let items: [(title: String, icon: String)] = [
@@ -40,45 +42,46 @@ struct BottomBar: View {
                         Text(items[i].title)
                             .font(.system(size: 11))
                     }
-                    .foregroundColor(selection == i ? Theme.onSurface : Theme.onSurfaceVariant)
+                    .foregroundColor(selection == i ? theme.palette.onSurface : theme.palette.onSurfaceVariant)
                     .frame(maxWidth: .infinity)
                 }
             }
         }
         .padding(.top, 8)
         .padding(.bottom, 2)
-        .background(Theme.surfaceContainer)
+        .background(theme.palette.surfaceContainer)
         .overlay(alignment: .top) {
-            Rectangle().fill(Theme.outline.opacity(0.1)).frame(height: 0.5)
+            Rectangle().fill(theme.palette.outline.opacity(0.1)).frame(height: 0.5)
         }
     }
 }
 
 struct SearchField: View {
+    @EnvironmentObject var theme: ThemeManager
     @Binding var text: String
     var placeholder: String = "搜索"
 
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(Theme.onSurfaceVariant)
+                .foregroundColor(theme.palette.onSurfaceVariant)
             ZStack(alignment: .leading) {
                 if text.isEmpty {
-                    Text(placeholder).foregroundColor(Theme.onSurfaceVariant)
+                    Text(placeholder).foregroundColor(theme.palette.onSurfaceVariant)
                 }
                 TextField("", text: $text)
-                    .foregroundColor(Theme.onSurface)
+                    .foregroundColor(theme.palette.onSurface)
             }
             if !text.isEmpty {
                 Button { text = "" } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(Theme.onSurfaceVariant)
+                        .foregroundColor(theme.palette.onSurfaceVariant)
                 }
             }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
-        .background(Theme.surfaceBright)
+        .background(theme.palette.surfaceBright)
         .clipShape(Capsule())
     }
 }
