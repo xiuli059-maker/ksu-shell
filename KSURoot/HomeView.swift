@@ -18,7 +18,7 @@ struct HomeView: View {
 
                 SupportLinks()
 
-                Spacer(minLength: 24)
+                Spacer(minLength: 110)
             }
             .padding(.horizontal, 12)
         }
