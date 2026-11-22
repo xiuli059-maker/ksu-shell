@@ -11,10 +11,10 @@ struct RootView: View {
                 .tabItem { Label("主页", systemImage: "house.fill") }
                 .tag(0)
             SuperUserView()
-                .tabItem { Label("超级用户", systemImage: "shield.fill") }
+                .tabItem { Label("超级用户", systemImage: "checkmark.shield.fill") }
                 .tag(1)
             ModuleView()
-                .tabItem { Label("模块", systemImage: "puzzlepiece.fill") }
+                .tabItem { Label("模块", systemImage: "puzzlepiece.extension") }
                 .tag(2)
             SettingsView()
                 .tabItem { Label("设置", systemImage: "gearshape.fill") }
