@@ -46,7 +46,7 @@ struct RootView: View {
     }
 }
 
-// FloatingBottomBar：玻璃胶囊指示器连续跟随手指拖动，松手吸附；点击/拖动同一手势
+// 悬浮胶囊 + 液态玻璃：Material 用 .background(_:in:) 正确采样（第一版写法）
 struct GlassBottomBar: View {
     @EnvironmentObject var theme: ThemeManager
     @Binding var selection: Int
@@ -63,14 +63,16 @@ struct GlassBottomBar: View {
         ("设置", "gearshape.fill")
     ]
 
-    private var useGlass: Bool { floating ? (theme.enableBlur && theme.enableFloatingBarBlur) : theme.enableBlur }
     private var progress: CGFloat { dragging ? dragProgress : CGFloat(selection) }
     private var tabWidth: CGFloat { barWidth > 1 ? barWidth / CGFloat(items.count) : 0 }
     private var activeIndex: Int { min(items.count - 1, max(0, Int(progress.rounded()))) }
 
     var body: some View {
+        if floating { floatingBar } else { dockedBar }
+    }
+
+    private var core: some View {
         ZStack(alignment: .leading) {
-            backgroundLayer
             if tabWidth > 0 {
                 indicator
                     .frame(width: tabWidth, height: 56)
@@ -85,8 +87,6 @@ struct GlassBottomBar: View {
                 .onAppear { barWidth = geo.size.width }
                 .onChange(of: geo.size.width) { w in barWidth = w }
         })
-        .overlay(borderLayer)
-        .shadow(color: .black.opacity(floating ? 0.32 : 0), radius: 20, y: 8)
         .contentShape(Rectangle())
         .gesture(dragGesture)
     }
@@ -106,62 +106,36 @@ struct GlassBottomBar: View {
         }
     }
 
-    @ViewBuilder private var backgroundLayer: some View {
-        if floating {
-            if useGlass {
-                ZStack {
-                    Capsule().fill(.ultraThinMaterial)
-                    Capsule().fill(Color.white.opacity(0.10))
-                    Capsule().fill(theme.palette.surfaceContainer.opacity(0.18))
-                }
-            } else {
-                Capsule().fill(theme.palette.surfaceContainer)
-            }
-        } else {
-            if useGlass {
-                ZStack {
-                    Rectangle().fill(.ultraThinMaterial)
-                    Rectangle().fill(Color.white.opacity(0.08))
-                }
-            } else {
-                Rectangle().fill(theme.palette.surfaceContainer)
-            }
-        }
-    }
-
     private var indicator: some View {
         Capsule()
-            .fill(.ultraThinMaterial)
-            .overlay(Capsule().fill(Color.white.opacity(0.12)))
-            .overlay(
-                Capsule().stroke(
-                    LinearGradient(
-                        colors: [Color.white.opacity(0.60), Color.white.opacity(0.08)],
-                        startPoint: .top, endPoint: .bottom
-                    ),
-                    lineWidth: 0.8
-                )
-            )
-            .shadow(color: .black.opacity(0.15), radius: 4, y: 1)
+            .fill(Color.white.opacity(0.14))
+            .overlay(Capsule().stroke(Color.white.opacity(0.35), lineWidth: 0.75))
+            .shadow(color: .black.opacity(0.12), radius: 4, y: 1)
             .padding(.vertical, 3)
             .padding(.horizontal, 2)
     }
 
-    @ViewBuilder private var borderLayer: some View {
-        if floating {
-            Capsule().stroke(
-                LinearGradient(
-                    colors: [Color.white.opacity(0.55), Color.white.opacity(0.06)],
-                    startPoint: .top, endPoint: .bottom
-                ),
-                lineWidth: 1
+    private var floatingBar: some View {
+        core
+            .background(.ultraThinMaterial, in: Capsule())
+            .overlay(
+                Capsule().stroke(
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.55), Color.white.opacity(0.06)],
+                        startPoint: .top, endPoint: .bottom
+                    ),
+                    lineWidth: 1
+                )
             )
-        } else {
-            VStack(spacing: 0) {
-                Rectangle().fill(Color.white.opacity(useGlass ? 0.28 : 0)).frame(height: 0.75)
-                Spacer()
+            .shadow(color: .black.opacity(0.30), radius: 20, y: 8)
+    }
+
+    private var dockedBar: some View {
+        core
+            .background(.ultraThinMaterial)
+            .overlay(alignment: .top) {
+                Rectangle().fill(Color.white.opacity(0.28)).frame(height: 0.75)
             }
-        }
     }
 
     private var dragGesture: some Gesture {
