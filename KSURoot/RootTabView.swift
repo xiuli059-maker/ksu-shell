@@ -7,10 +7,13 @@ struct RootView: View {
 
     private var appBackground: some View {
         ZStack {
-            Color(hex: 0x0E0F13)
-            Circle().fill(Color(hex: 0x2B5CA6)).frame(width: 440, height: 440).blur(radius: 130).offset(x: -120, y: -260)
-            Circle().fill(Color(hex: 0x8C3D8C)).frame(width: 380, height: 380).blur(radius: 120).offset(x: 150, y: 140)
-            Circle().fill(Color(hex: 0x2E8C6A)).frame(width: 340, height: 340).blur(radius: 110).offset(x: -90, y: 320)
+            LinearGradient(
+                colors: [Color(hex: 0x101A3A), Color(hex: 0x3A1050), Color(hex: 0x50102E), Color(hex: 0x6A2A10)],
+                startPoint: .top, endPoint: .bottom
+            )
+            Circle().fill(Color(hex: 0x3B6FE0)).frame(width: 400, height: 400).blur(radius: 55).offset(x: -120, y: -200)
+            Circle().fill(Color(hex: 0xB03B8C)).frame(width: 360, height: 360).blur(radius: 55).offset(x: 140, y: 100)
+            Circle().fill(Color(hex: 0xE0A050)).frame(width: 320, height: 320).blur(radius: 45).offset(x: -60, y: 300)
         }
         .ignoresSafeArea()
     }
@@ -143,7 +146,9 @@ struct GlassBottomBar: View {
 
     @ViewBuilder private var floatingBar: some View {
         if #available(iOS 26.0, *) {
-            core.glassEffect(.regular, in: .capsule)
+            GlassEffectContainer {
+                core.glassEffect(.regular, in: .capsule)
+            }
         } else {
             core
                 .background(.ultraThinMaterial, in: Capsule())
