@@ -250,7 +250,6 @@ struct TemplateEditorView: View {
                     TextEditor(text: $text)
                         .font(.system(size: 13, design: .monospaced))
                         .frame(height: 220)
-                        .scrollContentBackground(.hidden)
                         .foregroundColor(theme.palette.onSurface)
                 }
                 .padding(16)
