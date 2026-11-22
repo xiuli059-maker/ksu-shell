@@ -81,7 +81,7 @@ enum MockData {
     // 内核版本按需求显示为 0；系统指纹显示为三个问号；设备型号取真实机型
     static var systemInfo: SystemInfo {
         SystemInfo(
-            managerVersion: "v3.2.5 (32525-2)",
+            managerVersion: "v3.3.1 (35833)",
             kernelVersion: "iOS \(UIDevice.current.systemVersion)",
             deviceModel: DeviceInfo.modelName,
             fingerprint: "Apple",
