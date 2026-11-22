@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SuperUserView: View {
+    @EnvironmentObject var theme: ThemeManager
     @State private var search = ""
 
     private var filtered: [AppEntry] {
@@ -20,50 +21,54 @@ struct SuperUserView: View {
                 .padding(.bottom, 10)
 
             ScrollView {
-                SegmentedColumn {
-                    ForEach(filtered) { app in
-                        AppRow(app: app)
+                if filtered.isEmpty {
+                    EmptyPlaceholder(icon: "shield.slash", text: "暂无超级用户授权")
+                } else {
+                    SegmentedColumn {
+                        ForEach(filtered) { app in
+                            AppRow(app: app)
+                        }
                     }
+                    .padding(.horizontal, 16)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 24)
             }
         }
-        .background(Theme.surface.ignoresSafeArea())
+        .background(theme.palette.surface.ignoresSafeArea())
     }
 }
 
 struct AppRow: View {
+    @EnvironmentObject var theme: ThemeManager
     let app: AppEntry
 
     var body: some View {
         HStack(spacing: 16) {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(Theme.surfaceContainerHigh)
+                .fill(theme.palette.surfaceContainerHigh)
                 .frame(width: 40, height: 40)
                 .overlay(
                     Text(String(app.name.prefix(1)))
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(Theme.onSurfaceVariant)
+                        .foregroundColor(theme.palette.onSurfaceVariant)
                 )
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(app.name)
                     .font(.system(size: 16))
-                    .foregroundColor(Theme.onSurface)
+                    .foregroundColor(theme.palette.onSurface)
                 Text(app.packageName)
                     .font(.system(size: 12))
-                    .foregroundColor(Theme.onSurfaceVariant)
+                    .foregroundColor(theme.palette.onSurfaceVariant)
             }
             Spacer(minLength: 8)
             Image(systemName: app.allowSu ? "checkmark.shield.fill" : "shield.slash")
-                .foregroundColor(app.allowSu ? Theme.primary : Theme.onSurfaceVariant)
+                .foregroundColor(app.allowSu ? theme.palette.primary : theme.palette.onSurfaceVariant)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .overlay(alignment: .bottom) {
             Rectangle()
-                .fill(Theme.outline.opacity(0.12))
+                .fill(theme.palette.outline.opacity(0.12))
                 .frame(height: 0.5)
                 .padding(.leading, 72)
         }
