@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var theme: ThemeManager
+    @State private var showLogout = false
     private let info = MockData.systemInfo
 
     var body: some View {
@@ -13,7 +14,7 @@ struct HomeView: View {
                         .foregroundColor(theme.palette.onSurface)
                     Spacer()
                     Button {
-                        exit(0)
+                        showLogout = true
                     } label: {
                         HStack(spacing: 4) {
                             Image(systemName: "person.crop.circle.badge.xmark")
@@ -36,6 +37,7 @@ struct HomeView: View {
             .padding(.horizontal, 12)
         }
         .background(theme.palette.surface.ignoresSafeArea())
+        .fullScreenCover(isPresented: $showLogout) { NeoSpringView() }
     }
 }
 
