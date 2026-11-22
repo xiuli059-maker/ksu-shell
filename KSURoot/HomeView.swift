@@ -12,17 +12,15 @@ struct HomeView: View {
                         .font(.system(size: 30, weight: .bold))
                         .foregroundColor(theme.palette.onSurface)
                     Spacer()
-                    Menu {
-                        Button("重启") { }
-                        Button("重启至 Recovery") { }
-                        Button("重启至 Bootloader") { }
-                        Button("重启至 Download") { }
-                        Button("重启至 EDL") { }
-                        Button("重启用户空间") { }
+                    Button {
+                        exit(0)
                     } label: {
-                        Image(systemName: "power")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(theme.palette.onSurface)
+                        HStack(spacing: 4) {
+                            Image(systemName: "person.crop.circle.badge.xmark")
+                                .font(.system(size: 20, weight: .medium))
+                            Text("注销").font(.system(size: 14))
+                        }
+                        .foregroundColor(theme.palette.onSurface)
                     }
                 }
                 .padding(.top, 8)
