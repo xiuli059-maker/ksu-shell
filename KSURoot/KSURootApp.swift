@@ -4,7 +4,7 @@ import SwiftUI
 struct KSURootApp: App {
     var body: some Scene {
         WindowGroup {
-            RootTabView()
+            RootView()
                 .preferredColorScheme(.dark)
         }
     }
