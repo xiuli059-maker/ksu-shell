@@ -91,14 +91,14 @@ func buildPalette(seed: Seed, isDark: Bool, amoled: Bool) -> Palette {
             surfaceBright = Color(hex: 0x141416)
             surfaceContainerHigh = Color(hex: 0x1E1E21)
         } else {
-            surface = Color(hex: 0x0E0E10)
-            surfaceContainer = Color(hex: 0x141416)
-            surfaceBright = Color(hex: 0x1D1D20)
-            surfaceContainerHigh = Color(hex: 0x262629)
+            surface = Color(hex: 0x000000)
+            surfaceContainer = Color(hex: 0x0C0C0E)
+            surfaceBright = Color(hex: 0x1C1C1E)
+            surfaceContainerHigh = Color(hex: 0x2A2A2E)
         }
-        onSurface = Color(hex: 0xE4E2E6)
-        onSurfaceVariant = Color(hex: 0xC6C5CA)
-        outline = Color(hex: 0x8E8D93)
+        onSurface = Color(hex: 0xE6E6E8)
+        onSurfaceVariant = Color(hex: 0x9E9EA4)
+        outline = Color(hex: 0x4A4A4E)
     } else {
         surface = Color(hex: 0xFDFBFF)
         surfaceContainer = Color(hex: 0xF2F0F4)
