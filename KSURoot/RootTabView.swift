@@ -13,15 +13,20 @@ struct RootView: View {
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            BottomBar(selection: $selection)
+            GlassBottomBar(selection: $selection)
+                .padding(.horizontal, 28)
+                .padding(.bottom, 4)
+                .padding(.top, 2)
         }
         .background(theme.palette.surface.ignoresSafeArea())
     }
 }
 
-struct BottomBar: View {
+// 对应 Miuix FloatingBottomBar：悬浮胶囊 + 液态玻璃（毛玻璃 + 白高光描边 + 投影）+ 滑动高光指示器
+struct GlassBottomBar: View {
     @EnvironmentObject var theme: ThemeManager
     @Binding var selection: Int
+    @Namespace private var ns
 
     private let items: [(title: String, icon: String)] = [
         ("主页", "house.fill"),
@@ -34,25 +39,38 @@ struct BottomBar: View {
         HStack(spacing: 0) {
             ForEach(0..<items.count, id: \.self) { i in
                 Button {
-                    withAnimation(.easeInOut(duration: 0.2)) { selection = i }
-                } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: items[i].icon)
-                            .font(.system(size: 22))
-                        Text(items[i].title)
-                            .font(.system(size: 11))
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
+                        selection = i
                     }
-                    .foregroundColor(selection == i ? theme.palette.onSurface : theme.palette.onSurfaceVariant)
+                } label: {
+                    VStack(spacing: 3) {
+                        Image(systemName: items[i].icon)
+                            .font(.system(size: 20, weight: .medium))
+                        Text(items[i].title)
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                    .foregroundColor(selection == i ? theme.palette.primary : theme.palette.onSurfaceVariant)
                     .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .background {
+                        if selection == i {
+                            Capsule()
+                                .fill(.ultraThinMaterial)
+                                .overlay(
+                                    Capsule().stroke(Color.white.opacity(0.18), lineWidth: 0.5)
+                                )
+                                .shadow(color: .black.opacity(0.15), radius: 4, y: 1)
+                                .matchedGeometryEffect(id: "indicator", in: ns)
+                        }
+                    }
                 }
+                .buttonStyle(.plain)
             }
         }
-        .padding(.top, 8)
-        .padding(.bottom, 2)
-        .background(theme.palette.surfaceContainer)
-        .overlay(alignment: .top) {
-            Rectangle().fill(theme.palette.outline.opacity(0.1)).frame(height: 0.5)
-        }
+        .padding(4)
+        .background(.ultraThinMaterial, in: Capsule())
+        .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 0.5))
+        .shadow(color: .black.opacity(0.28), radius: 14, y: 6)
     }
 }
 
@@ -81,7 +99,7 @@ struct SearchField: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
-        .background(theme.palette.surfaceBright)
+        .background(theme.palette.surfaceContainerHigh)
         .clipShape(Capsule())
     }
 }
