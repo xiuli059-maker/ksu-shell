@@ -41,6 +41,8 @@ struct RegionPreset: Identifiable {
         .init(id: "CA", title: "加拿大 C", code: "C", info: "C/A")
     ]
 }
+
+enum CapabilityCategory: String, CaseIterable, Identifiable {
     case display = "显示"
     case device = "设备"
     case ipad = "iPad"
