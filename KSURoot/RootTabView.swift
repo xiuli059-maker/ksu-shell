@@ -5,24 +5,24 @@ struct RootView: View {
     @State private var selection = 0
 
     var body: some View {
-        TabView(selection: $selection) {
-            HomeView().tag(0)
-            SuperUserView().tag(1)
-            ModuleView().tag(2)
-            SettingsView().tag(3)
-        }
-        .tabViewStyle(.page(indexDisplayMode: .never))
-        .safeAreaInset(edge: .bottom, spacing: 0) {
+        ZStack(alignment: .bottom) {
+            TabView(selection: $selection) {
+                HomeView().tag(0)
+                SuperUserView().tag(1)
+                ModuleView().tag(2)
+                SettingsView().tag(3)
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+
             GlassBottomBar(selection: $selection)
                 .padding(.horizontal, 28)
-                .padding(.bottom, 4)
-                .padding(.top, 2)
+                .padding(.bottom, 6)
         }
         .background(theme.palette.surface.ignoresSafeArea())
     }
 }
 
-// 对应 Miuix FloatingBottomBar：悬浮胶囊 + 液态玻璃（毛玻璃 + 白高光描边 + 投影）+ 滑动高光指示器
+// Miuix FloatingBottomBar：悬浮胶囊 + 液态玻璃（毛玻璃 + 半透明叠加 + 白高光描边 + 投影）+ 滑动高光指示器
 struct GlassBottomBar: View {
     @EnvironmentObject var theme: ThemeManager
     @Binding var selection: Int
@@ -56,10 +56,8 @@ struct GlassBottomBar: View {
                         if selection == i {
                             Capsule()
                                 .fill(.ultraThinMaterial)
-                                .overlay(
-                                    Capsule().stroke(Color.white.opacity(0.18), lineWidth: 0.5)
-                                )
-                                .shadow(color: .black.opacity(0.15), radius: 4, y: 1)
+                                .background(Capsule().fill(Color.white.opacity(0.10)))
+                                .overlay(Capsule().stroke(Color.white.opacity(0.22), lineWidth: 0.75))
                                 .matchedGeometryEffect(id: "indicator", in: ns)
                         }
                     }
@@ -68,9 +66,15 @@ struct GlassBottomBar: View {
             }
         }
         .padding(4)
-        .background(.ultraThinMaterial, in: Capsule())
-        .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 0.5))
-        .shadow(color: .black.opacity(0.28), radius: 14, y: 6)
+        .background {
+            Capsule().fill(.ultraThinMaterial)
+            Capsule().fill(theme.palette.surfaceContainer.opacity(0.30))
+        }
+        .overlay(Capsule().stroke(Color.white.opacity(0.16), lineWidth: 0.75))
+        .overlay(
+            Capsule().inset(by: 0.6).stroke(Color.white.opacity(0.05), lineWidth: 0.5).blur(radius: 1)
+        )
+        .shadow(color: .black.opacity(0.32), radius: 16, y: 8)
     }
 }
 
