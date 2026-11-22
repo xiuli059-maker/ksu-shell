@@ -8,17 +8,30 @@ struct RootView: View {
     var body: some View {
         ZStack {
             appBackground
+            tabs
+        }
+        .fullScreenCover(item: Binding(get: { appState.route }, set: { appState.route = $0 })) { route in
+            ScreenHost(route: route)
+                .environmentObject(theme)
+                .environmentObject(appState)
+        }
+    }
+
+    @ViewBuilder private var tabs: some View {
+        if #available(iOS 18.0, *) {
             TabView(selection: $selection) {
                 Tab("主页", systemImage: "house.fill", value: 0) { HomeView() }
                 Tab("超级用户", systemImage: "shield.fill", value: 1) { SuperUserView() }
                 Tab("模块", systemImage: "puzzlepiece.fill", value: 2) { ModuleView() }
                 Tab("设置", systemImage: "gearshape.fill", value: 3) { SettingsView() }
             }
-        }
-        .fullScreenCover(item: Binding(get: { appState.route }, set: { appState.route = $0 })) { route in
-            ScreenHost(route: route)
-                .environmentObject(theme)
-                .environmentObject(appState)
+        } else {
+            TabView(selection: $selection) {
+                HomeView().tabItem { Label("主页", systemImage: "house.fill") }.tag(0)
+                SuperUserView().tabItem { Label("超级用户", systemImage: "shield.fill") }.tag(1)
+                ModuleView().tabItem { Label("模块", systemImage: "puzzlepiece.fill") }.tag(2)
+                SettingsView().tabItem { Label("设置", systemImage: "gearshape.fill") }.tag(3)
+            }
         }
     }
 
