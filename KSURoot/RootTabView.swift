@@ -46,7 +46,7 @@ struct RootView: View {
     }
 }
 
-// BottomBarMiuix / FloatingBottomBar：贴底 NavigationBar(默认, BlurredBar 模糊) 或 悬浮胶囊(FloatingBottomBar)
+// BottomBarMiuix / FloatingBottomBar：整体拖动手势统一处理点击与拖动切换
 struct GlassBottomBar: View {
     @EnvironmentObject var theme: ThemeManager
     @Binding var selection: Int
@@ -66,38 +66,30 @@ struct GlassBottomBar: View {
     }
 
     var body: some View {
-        if floating {
-            floatingBar
-        } else {
-            dockedBar
-        }
+        if floating { floatingBar } else { dockedBar }
     }
 
     private var tabsRow: some View {
         HStack(spacing: 0) {
             ForEach(0..<items.count, id: \.self) { i in
-                Button {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) { selection = i }
-                } label: {
-                    VStack(spacing: 3) {
-                        Image(systemName: items[i].icon)
-                            .font(.system(size: 20, weight: .medium))
-                        Text(items[i].title)
-                            .font(.system(size: 11, weight: .medium))
-                    }
-                    .foregroundColor(selection == i ? theme.palette.primary : theme.palette.onSurfaceVariant)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background {
-                        if selection == i {
-                            Capsule()
-                                .fill(floating && useGlass ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(theme.palette.primary.opacity(floating ? 0.16 : 0.14)))
-                                .overlay(Capsule().stroke(Color.white.opacity(floating && useGlass ? 0.22 : 0.0), lineWidth: 0.75))
-                                .matchedGeometryEffect(id: "indicator", in: ns)
-                        }
+                VStack(spacing: 3) {
+                    Image(systemName: items[i].icon)
+                        .font(.system(size: 20, weight: .medium))
+                    Text(items[i].title)
+                        .font(.system(size: 11, weight: .medium))
+                }
+                .foregroundColor(selection == i ? theme.palette.primary : theme.palette.onSurfaceVariant)
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
+                .background {
+                    if selection == i {
+                        Capsule()
+                            .fill(floating && useGlass ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(theme.palette.primary.opacity(floating ? 0.16 : 0.14)))
+                            .overlay(Capsule().stroke(Color.white.opacity(floating && useGlass ? 0.22 : 0.0), lineWidth: 0.75))
+                            .matchedGeometryEffect(id: "indicator", in: ns)
                     }
                 }
-                .buttonStyle(.plain)
+                .contentShape(Rectangle())
             }
         }
         .background(
@@ -107,13 +99,16 @@ struct GlassBottomBar: View {
                     .onChange(of: geo.size.width) { w in barWidth = w }
             }
         )
+        .contentShape(Rectangle())
         .gesture(
-            DragGesture(minimumDistance: 3)
+            DragGesture(minimumDistance: 0)
                 .onChanged { v in
                     guard barWidth > 1 else { return }
                     let tw = barWidth / CGFloat(items.count)
                     let idx = min(items.count - 1, max(0, Int(v.location.x / tw)))
-                    if idx != selection { selection = idx }
+                    if idx != selection {
+                        withAnimation(.easeInOut(duration: 0.12)) { selection = idx }
+                    }
                 }
         )
     }
