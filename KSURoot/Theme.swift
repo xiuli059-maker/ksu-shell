@@ -61,8 +61,8 @@ final class ThemeManager: ObservableObject {
 
     // 对应 SettingsUiState 默认值
     @Published var enableBlur: Bool = true
-    @Published var enableFloatingBar: Bool = false
-    @Published var enableFloatingBarBlur: Bool = false
+    @Published var enableFloatingBar: Bool = true
+    @Published var enableFloatingBarBlur: Bool = true
     @Published var enableNavBadge: Bool = true
     @Published var enableSwipeDismiss: Bool = true
     @Published var enablePredictiveBack: Bool = false
