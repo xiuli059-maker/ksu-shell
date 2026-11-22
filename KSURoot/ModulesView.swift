@@ -1,26 +1,32 @@
 import SwiftUI
 
 struct ModuleView: View {
+    @EnvironmentObject var theme: ThemeManager
     @State private var modules = MockData.modules
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 LargeTitle(text: "模块")
-                VStack(spacing: 13) {
-                    ForEach($modules) { $module in
-                        ModuleCard(module: $module)
+                if modules.isEmpty {
+                    EmptyPlaceholder(icon: "puzzlepiece.extension", text: "暂无已安装模块")
+                } else {
+                    VStack(spacing: 13) {
+                        ForEach($modules) { $module in
+                            ModuleCard(module: $module)
+                        }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 24)
             }
         }
-        .background(Theme.surface.ignoresSafeArea())
+        .background(theme.palette.surface.ignoresSafeArea())
     }
 }
 
 struct ModuleCard: View {
+    @EnvironmentObject var theme: ThemeManager
     @Binding var module: ModuleEntry
 
     var body: some View {
@@ -30,52 +36,52 @@ struct ModuleCard: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(module.name)
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(Theme.onSurface)
+                            .foregroundColor(theme.palette.onSurface)
                             .strikethrough(module.markedRemove)
                         Text("版本: \(module.version)")
                             .font(.system(size: 12))
-                            .foregroundColor(Theme.onSurfaceVariant)
+                            .foregroundColor(theme.palette.onSurfaceVariant)
                         Text("作者: \(module.author)")
                             .font(.system(size: 12))
-                            .foregroundColor(Theme.onSurfaceVariant)
+                            .foregroundColor(theme.palette.onSurfaceVariant)
                     }
                     Spacer(minLength: 8)
                     Toggle("", isOn: $module.enabled)
                         .labelsHidden()
-                        .tint(Theme.primary)
+                        .tint(theme.palette.primary)
                         .disabled(module.markedRemove)
                 }
 
                 if !module.detail.isEmpty {
                     Text(module.detail)
                         .font(.system(size: 14))
-                        .foregroundColor(Theme.onSurfaceVariant)
+                        .foregroundColor(theme.palette.onSurfaceVariant)
                 }
 
                 if module.meta {
-                    StatusTag(text: "META")
+                    StatusTag(text: "META", background: theme.palette.primary, foreground: theme.palette.onPrimary)
                 }
 
-                Divider().overlay(Theme.outline.opacity(0.15))
+                Divider().overlay(theme.palette.outline.opacity(0.15))
 
                 HStack(spacing: 12) {
                     if module.hasAction {
-                        pillButton("play.fill", bg: Theme.secondaryContainer, fg: Theme.onSecondaryContainer)
+                        pillButton("play.fill", bg: theme.palette.secondaryContainer, fg: theme.palette.onSecondaryContainer)
                     }
                     if module.hasWebUi {
-                        pillButton("chevron.left.forwardslash.chevron.right", bg: Theme.secondaryContainer, fg: Theme.onSecondaryContainer)
+                        pillButton("chevron.left.forwardslash.chevron.right", bg: theme.palette.secondaryContainer, fg: theme.palette.onSecondaryContainer)
                     }
                     Spacer()
                     if module.hasUpdate {
                         Button { } label: {
                             Label("更新", systemImage: "arrow.down.circle")
                                 .font(.system(size: 13))
-                                .foregroundColor(Theme.primary)
+                                .foregroundColor(theme.palette.primary)
                         }
                     }
                     pillButton(module.markedRemove ? "arrow.uturn.backward" : "trash",
-                               bg: Theme.surfaceContainerHigh,
-                               fg: module.markedRemove ? Theme.onSurfaceVariant : Theme.error)
+                               bg: theme.palette.surfaceContainerHigh,
+                               fg: module.markedRemove ? theme.palette.onSurfaceVariant : theme.palette.error)
                 }
             }
             .padding(16)
