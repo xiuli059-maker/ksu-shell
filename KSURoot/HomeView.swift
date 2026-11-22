@@ -22,7 +22,7 @@ struct HomeView: View {
             }
             .padding(.horizontal, 12)
         }
-        .background(theme.palette.surface.ignoresSafeArea())
+        .background(Color.clear)
     }
 }
 
