@@ -2,10 +2,13 @@ import SwiftUI
 
 @main
 struct KSURootApp: App {
+    @StateObject private var theme = ThemeManager()
+
     var body: some Scene {
         WindowGroup {
             RootView()
-                .preferredColorScheme(.dark)
+                .environmentObject(theme)
+                .preferredColorScheme(theme.isDark ? .dark : .light)
         }
     }
 }
