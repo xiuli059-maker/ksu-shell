@@ -84,8 +84,9 @@ struct GlassBottomBar: View {
                 .background {
                     if selection == i {
                         Capsule()
-                            .fill(floating && useGlass ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(theme.palette.primary.opacity(floating ? 0.16 : 0.14)))
-                            .overlay(Capsule().stroke(Color.white.opacity(floating && useGlass ? 0.22 : 0.0), lineWidth: 0.75))
+                            .fill(.ultraThinMaterial)
+                            .overlay(Capsule().stroke(Color.white.opacity(0.25), lineWidth: 0.75))
+                            .shadow(color: .black.opacity(0.12), radius: 3, y: 1)
                             .matchedGeometryEffect(id: "indicator", in: ns)
                     }
                 }
