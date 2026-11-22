@@ -108,6 +108,30 @@ final class MobileGestaltManager: ObservableObject {
         }
     }
 
+    func writeExtra(_ updates: [String: Any]) {
+        if !acquire() { status = "需要访问权限（需 App Group 签名）"; return }
+        guard var plist = readPlist(), var extra = plist["CacheExtra"] as? [String: Any] else { status = "读取失败"; return }
+        backUp()
+        for (k, v) in updates { extra[k] = v }
+        plist["CacheExtra"] = extra
+        guard let out = try? PropertyListSerialization.data(fromPropertyList: plist, format: .binary, options: 0) else { status = "序列化失败"; return }
+        do {
+            try out.write(to: URL(fileURLWithPath: MobileGestaltManager.plistPath))
+            status = "已写入 \(updates.count) 项"
+        } catch { status = "写入失败：\(error.localizedDescription)" }
+    }
+
+    func setModel(_ value: String) {
+        guard !value.isEmpty else { return }
+        writeExtra([GestaltKeys.modelNumber: value])
+        status = "机型编号 → \(value)"
+    }
+
+    func setRegion(_ code: String, _ info: String) {
+        writeExtra([GestaltKeys.regionCode: code, GestaltKeys.regionInfo: info])
+        status = "地区代码 → \(code)"
+    }
+
     private func backupsDir() -> URL {
         let base = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let dir = base.appendingPathComponent("MobileGestaltBackups", isDirectory: true)
