@@ -124,9 +124,9 @@ struct SupportLinks: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            supportRow(icon: "heart", title: "支持开发", summary: "赞助 KernelSU 的持续开发")
+            supportRow(icon: "hand.raised", title: "支持开发", summary: "KernelSU 将保持免费开源，向开发者捐赠以表示支持")
             Divider().overlay(theme.palette.outline.opacity(0.15)).padding(.leading, 46)
-            supportRow(icon: "book", title: "了解 KernelSU", summary: "查看官方文档与说明")
+            supportRow(icon: "book", title: "了解 KernelSU", summary: "了解如何安装 KernelSU 以及如何开发模块")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 4)
