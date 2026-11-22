@@ -59,6 +59,16 @@ final class ThemeManager: ObservableObject {
     @Published var seed: Int = 0
     @Published var uiMode: Int = 0   // 0 = Material 3, 1 = Miuix
 
+    // 对应 SettingsUiState 默认值
+    @Published var enableBlur: Bool = true
+    @Published var enableFloatingBar: Bool = false
+    @Published var enableFloatingBarBlur: Bool = false
+    @Published var enableNavBadge: Bool = true
+    @Published var enableSwipeDismiss: Bool = true
+    @Published var enablePredictiveBack: Bool = false
+    @Published var pageScale: Double = 1.0
+    @Published var moduleDescMaxLines: Int = 4
+
     var palette: Palette {
         buildPalette(seed: Seed(rawValue: seed) ?? .green, isDark: isDark, amoled: amoled)
     }
