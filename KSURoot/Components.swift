@@ -2,11 +2,13 @@ import SwiftUI
 
 // MARK: - Large title bar (Material LargeFlexibleTopAppBar equivalent)
 struct LargeTitle: View {
+    @EnvironmentObject var theme: ThemeManager
     let text: String
+
     var body: some View {
         Text(text)
             .font(.system(size: 34, weight: .bold))
-            .foregroundColor(Theme.onSurface)
+            .foregroundColor(theme.palette.onSurface)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
             .padding(.top, 8)
@@ -16,6 +18,7 @@ struct LargeTitle: View {
 
 // MARK: - Segmented column (Material SegmentedList equivalent)
 struct SegmentedColumn<Content: View>: View {
+    @EnvironmentObject var theme: ThemeManager
     var title: String? = nil
     @ViewBuilder let content: () -> Content
 
@@ -24,13 +27,13 @@ struct SegmentedColumn<Content: View>: View {
             if let title = title {
                 Text(title)
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(Theme.primary)
+                    .foregroundColor(theme.palette.primary)
                     .padding(.leading, 16)
             }
             VStack(spacing: 0) {
                 content()
             }
-            .background(Theme.surfaceBright)
+            .background(theme.palette.surfaceBright)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
     }
@@ -38,6 +41,7 @@ struct SegmentedColumn<Content: View>: View {
 
 // MARK: - Generic segmented row
 struct SegmentedRow: View {
+    @EnvironmentObject var theme: ThemeManager
     var icon: String? = nil
     let title: String
     var subtitle: String? = nil
@@ -51,24 +55,22 @@ struct SegmentedRow: View {
             if let icon = icon {
                 Image(systemName: icon)
                     .font(.system(size: 20))
-                    .foregroundColor(Theme.onSurfaceVariant)
+                    .foregroundColor(theme.palette.onSurfaceVariant)
                     .frame(width: 24)
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.system(size: 16))
-                    .foregroundColor(Theme.onSurface)
+                    .foregroundColor(theme.palette.onSurface)
                 if let subtitle = subtitle, !subtitle.isEmpty {
                     Text(subtitle)
                         .font(.system(size: 13))
-                        .foregroundColor(Theme.onSurfaceVariant)
+                        .foregroundColor(theme.palette.onSurfaceVariant)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
             Spacer(minLength: 8)
-            if let trailing = trailing {
-                trailing
-            }
+            if let trailing = trailing { trailing }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, hasSubtitle ? 12 : 14)
@@ -76,7 +78,7 @@ struct SegmentedRow: View {
         .onTapGesture { action?() }
         .overlay(alignment: .bottom) {
             Rectangle()
-                .fill(Theme.outline.opacity(0.12))
+                .fill(theme.palette.outline.opacity(0.12))
                 .frame(height: 0.5)
                 .padding(.leading, icon != nil ? 56 : 16)
         }
@@ -85,6 +87,7 @@ struct SegmentedRow: View {
 
 // MARK: - Switch row
 struct SegmentedSwitchRow: View {
+    @EnvironmentObject var theme: ThemeManager
     var icon: String? = nil
     let title: String
     var subtitle: String? = nil
@@ -98,7 +101,7 @@ struct SegmentedSwitchRow: View {
             trailing: AnyView(
                 Toggle("", isOn: $isOn)
                     .labelsHidden()
-                    .tint(Theme.primary)
+                    .tint(theme.palette.primary)
             )
         )
     }
@@ -106,6 +109,7 @@ struct SegmentedSwitchRow: View {
 
 // MARK: - Link row (with chevron)
 struct SegmentedLinkRow: View {
+    @EnvironmentObject var theme: ThemeManager
     var icon: String? = nil
     let title: String
     var subtitle: String? = nil
@@ -119,29 +123,31 @@ struct SegmentedLinkRow: View {
             trailing: AnyView(
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(Theme.onSurfaceVariant)
+                    .foregroundColor(theme.palette.onSurfaceVariant)
             ),
             action: action
         )
     }
 }
 
-// MARK: - Tonal card (Material TonalCard / Card equivalent)
+// MARK: - Tonal card
 struct TonalCard<Content: View>: View {
+    @EnvironmentObject var theme: ThemeManager
     @ViewBuilder let content: () -> Content
+
     var body: some View {
         content()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Theme.surfaceBright)
+            .background(theme.palette.surfaceBright)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
 
-// MARK: - Status tag (Material StatusTag equivalent)
+// MARK: - Status tag
 struct StatusTag: View {
     let text: String
-    var background: Color = Theme.primary
-    var foreground: Color = Theme.onPrimary
+    var background: Color = Color(hex: 0xA9D6A3)
+    var foreground: Color = Color(hex: 0x0B3A11)
 
     var body: some View {
         Text(text)
@@ -154,7 +160,22 @@ struct StatusTag: View {
     }
 }
 
-// MARK: - Section spacing helper
-struct SectionGap: View {
-    var body: some View { Color.clear.frame(height: 13) }
+// MARK: - Empty state
+struct EmptyPlaceholder: View {
+    @EnvironmentObject var theme: ThemeManager
+    let icon: String
+    let text: String
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 46))
+                .foregroundColor(theme.palette.onSurfaceVariant.opacity(0.6))
+            Text(text)
+                .font(.system(size: 15))
+                .foregroundColor(theme.palette.onSurfaceVariant)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 80)
+    }
 }
