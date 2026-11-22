@@ -156,12 +156,7 @@ struct FlashView: View {
 struct ModuleRepoView: View {
     @EnvironmentObject var theme: ThemeManager
     @State private var q = ""
-    private let repos = [
-        (name: "Zygisk - LSPosed", sum: "在 Zygisk 下运行的 Xposed 实现", stars: "12.3k"),
-        (name: "Turbo Charge", sum: "调整充电电流与温控策略", stars: "860"),
-        (name: "Systemless Hosts", sum: "系统级 hosts 支持", stars: "2.1k"),
-        (name: "Magisk Mount", sum: "Magisk 模块挂载兼容", stars: "640")
-    ]
+    private let repos: [(name: String, sum: String, stars: String)] = []
     var body: some View {
         SubScreen(title: "模块仓库") {
             SearchField(text: $q, placeholder: "搜索仓库")
@@ -300,12 +295,7 @@ struct TemplateEditorView: View {
 struct SulogView: View {
     @EnvironmentObject var theme: ThemeManager
     @State private var q = ""
-    private let logs = [
-        (t: "21:32:10", app: "MT管理器", pkg: "bin.mt.plus", ok: true),
-        (t: "21:30:44", app: "Scene", pkg: "com.omarea.vtools", ok: false),
-        (t: "21:28:03", app: "LSPosed", pkg: "org.lsposed.manager", ok: true),
-        (t: "21:25:51", app: "开山斧", pkg: "com.kaishanfu.pro", ok: true)
-    ]
+    private let logs: [(t: String, app: String, pkg: String, ok: Bool)] = []
     var body: some View {
         SubScreen(title: "su 日志") {
             SearchField(text: $q, placeholder: "搜索日志")
