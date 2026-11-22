@@ -85,8 +85,17 @@ struct GlassBottomBar: View {
                     if selection == i {
                         Capsule()
                             .fill(.ultraThinMaterial)
-                            .overlay(Capsule().stroke(Color.white.opacity(0.25), lineWidth: 0.75))
-                            .shadow(color: .black.opacity(0.12), radius: 3, y: 1)
+                            .overlay(Capsule().fill(Color.white.opacity(0.12)))
+                            .overlay(
+                                Capsule().stroke(
+                                    LinearGradient(
+                                        colors: [Color.white.opacity(0.60), Color.white.opacity(0.08)],
+                                        startPoint: .top, endPoint: .bottom
+                                    ),
+                                    lineWidth: 0.8
+                                )
+                            )
+                            .shadow(color: .black.opacity(0.15), radius: 4, y: 1)
                             .matchedGeometryEffect(id: "indicator", in: ns)
                     }
                 }
@@ -121,14 +130,23 @@ struct GlassBottomBar: View {
                 if useGlass {
                     ZStack {
                         Capsule().fill(.ultraThinMaterial)
-                        Capsule().fill(theme.palette.surfaceContainer.opacity(0.30))
+                        Capsule().fill(Color.white.opacity(0.10))
+                        Capsule().fill(theme.palette.surfaceContainer.opacity(0.18))
                     }
                 } else {
                     Capsule().fill(theme.palette.surfaceContainer)
                 }
             }
-            .overlay(Capsule().stroke(Color.white.opacity(useGlass ? 0.16 : 0.06), lineWidth: 0.75))
-            .shadow(color: .black.opacity(0.30), radius: 16, y: 8)
+            .overlay(
+                Capsule().stroke(
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.55), Color.white.opacity(0.06)],
+                        startPoint: .top, endPoint: .bottom
+                    ),
+                    lineWidth: 1
+                )
+            )
+            .shadow(color: .black.opacity(0.32), radius: 20, y: 8)
     }
 
     private var dockedBar: some View {
@@ -141,13 +159,16 @@ struct GlassBottomBar: View {
         .frame(maxWidth: .infinity)
         .background {
             if useGlass {
-                Rectangle().fill(.ultraThinMaterial)
+                ZStack {
+                    Rectangle().fill(.ultraThinMaterial)
+                    Rectangle().fill(Color.white.opacity(0.08))
+                }
             } else {
                 Rectangle().fill(theme.palette.surfaceContainer)
             }
         }
         .overlay(alignment: .top) {
-            Rectangle().fill(theme.palette.outline.opacity(0.12)).frame(height: 0.5)
+            Rectangle().fill(Color.white.opacity(useGlass ? 0.28 : 0.0)).frame(height: 0.75)
         }
     }
 }
