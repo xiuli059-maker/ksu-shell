@@ -15,6 +15,13 @@ struct SuperUserView: View {
                     .foregroundColor(theme.palette.onSurfaceVariant)
                     .padding(.horizontal, 4)
 
+                SegmentedColumn(title: "设备机型") {
+                    SegmentedRow(icon: "iphone", title: "机型编号", subtitle: "修改 Model Number",
+                                 trailing: AnyView(modelMenu))
+                    SegmentedRow(icon: "globe", title: "地区代码", subtitle: "修改 Region Code",
+                                 trailing: AnyView(regionMenu))
+                }
+
                 ForEach(CapabilityCategory.allCases) { cat in
                     let caps = Capability.all.filter { $0.category == cat }
                     if !caps.isEmpty {
@@ -54,5 +61,35 @@ struct SuperUserView: View {
         }
         .background(theme.palette.surface.ignoresSafeArea())
         .onAppear { mg.load() }
+    }
+
+    private var modelMenu: some View {
+        Menu {
+            ForEach(ModelPreset.all) { p in
+                Button(p.title) { mg.setModel(p.value) }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text("选择")
+                Image(systemName: "chevron.up.chevron.down").font(.system(size: 11))
+            }
+            .font(.system(size: 14))
+            .foregroundColor(theme.palette.primary)
+        }
+    }
+
+    private var regionMenu: some View {
+        Menu {
+            ForEach(RegionPreset.all) { r in
+                Button(r.title) { mg.setRegion(r.code, r.info) }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text("选择")
+                Image(systemName: "chevron.up.chevron.down").font(.system(size: 11))
+            }
+            .font(.system(size: 14))
+            .foregroundColor(theme.palette.primary)
+        }
     }
 }
