@@ -1,0 +1,43 @@
+name: Build IPA
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build unsigned app (arm64)
+        run: |
+          xcodebuild \
+            -project KSURoot.xcodeproj \
+            -scheme KSURoot \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+
+      - name: Package IPA
+        run: |
+          APP="build/Build/Products/Release-iphoneos/KSURoot.app"
+          test -d "$APP" || { echo "missing .app"; exit 1; }
+          mkdir -p Payload
+          cp -r "$APP" Payload/
+          zip -qr KSURoot-unsigned.ipa Payload
+          ls -la KSURoot-unsigned.ipa
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: KSURoot-unsigned-ipa
+          path: KSURoot-unsigned.ipa
