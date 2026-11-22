@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import Security
 
 struct BackupItem: Identifiable {
     let id = UUID()
@@ -14,6 +15,19 @@ final class MobileGestaltManager: ObservableObject {
     static let plistPath = cachesDir + "/com.apple.MobileGestalt.plist"
     static let appGroup = "group.com.example.ksuroot"
 
+    // 读取当前签名里实际的 App Group（自动适配你证书的 group）
+    static func signedAppGroups() -> [String] {
+        guard let task = SecTaskCreateFromSelf(nil),
+              let val = SecTaskCopyValueForEntitlement(task, "com.apple.security.application-groups" as CFString, nil) else {
+            return []
+        }
+        return (val as? [String]) ?? []
+    }
+
+    private var effectiveGroup: String {
+        MobileGestaltManager.signedAppGroups().first ?? MobileGestaltManager.appGroup
+    }
+
     @Published var status = "未连接"
     @Published var accessGranted = false
     @Published var entries: [(key: String, value: String)] = []
@@ -27,7 +41,7 @@ final class MobileGestaltManager: ObservableObject {
     @discardableResult
     func acquire() -> Bool {
         if accessGranted { return true }
-        handle = worse_query(MobileGestaltManager.cachesDir, MobileGestaltManager.appGroup, false, false)
+        handle = worse_query(MobileGestaltManager.cachesDir, effectiveGroup, false, false)
         accessGranted = handle > 0
         return accessGranted
     }
@@ -37,8 +51,11 @@ final class MobileGestaltManager: ObservableObject {
     }
 
     func load() {
+        let groups = MobileGestaltManager.signedAppGroups()
         if !acquire() {
-            status = "访问失败（\(handle)）· 需带 App Group 的签名"
+            status = groups.isEmpty
+                ? "访问失败（\(handle)）· 签名未带 App Group，请用带 App Group 的证书/描述文件重签"
+                : "访问失败（\(handle)）· App Group: \(groups.joined(separator: ", "))"
             return
         }
         guard let plist = readPlist(), let extra = plist["CacheExtra"] as? [String: Any] else {
