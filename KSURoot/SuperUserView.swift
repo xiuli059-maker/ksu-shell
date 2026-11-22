@@ -1,32 +1,51 @@
 import SwiftUI
 
+// 超级用户页 = 所有可改的 MobileGestalt（CacheExtra）功能项
 struct SuperUserView: View {
     @EnvironmentObject var theme: ThemeManager
-    @State private var search = ""
+    @EnvironmentObject var mg: MobileGestaltManager
+    @State private var q = ""
 
-    private var filtered: [AppEntry] {
-        if search.isEmpty { return MockData.apps }
-        return MockData.apps.filter {
-            $0.name.localizedCaseInsensitiveContains(search) ||
-            $0.packageName.localizedCaseInsensitiveContains(search)
-        }
+    private var filtered: [(key: String, value: String)] {
+        if q.isEmpty { return mg.entries }
+        return mg.entries.filter { $0.key.localizedCaseInsensitiveContains(q) || $0.value.localizedCaseInsensitiveContains(q) }
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             LargeTitle(text: "超级用户")
 
-            SearchField(text: $search, placeholder: "搜索应用或包名")
+            SearchField(text: $q, placeholder: "搜索 MobileGestalt 字段（如 DeviceSupports / Region）")
                 .padding(.horizontal, 16)
-                .padding(.bottom, 10)
+                .padding(.bottom, 8)
+
+            Text(mg.status)
+                .font(.system(size: 12))
+                .foregroundColor(theme.palette.onSurfaceVariant)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
 
             ScrollView {
                 if filtered.isEmpty {
-                    EmptyPlaceholder(icon: "shield.slash", text: "暂无超级用户授权")
+                    EmptyPlaceholder(icon: "shield.slash", text: mg.status)
                 } else {
                     SegmentedColumn {
-                        ForEach(filtered) { app in
-                            AppRow(app: app)
+                        ForEach(Array(filtered.enumerated()), id: \.offset) { _, e in
+                            HStack(spacing: 12) {
+                                Image(systemName: "checkmark.shield.fill")
+                                    .foregroundColor(theme.palette.primary)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(e.key)
+                                        .font(.system(size: 14))
+                                        .foregroundColor(theme.palette.onSurface)
+                                    Text(e.value)
+                                        .font(.system(size: 12))
+                                        .foregroundColor(theme.palette.onSurfaceVariant)
+                                        .lineLimit(1)
+                                }
+                                Spacer(minLength: 0)
+                            }
+                            .padding(16)
                         }
                     }
                     .padding(.horizontal, 16)
@@ -34,44 +53,7 @@ struct SuperUserView: View {
                 }
             }
         }
-        .background(theme.palette.surface)
-    }
-}
-
-struct AppRow: View {
-    @EnvironmentObject var theme: ThemeManager
-    let app: AppEntry
-
-    var body: some View {
-        HStack(spacing: 16) {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(theme.palette.surfaceContainerHigh)
-                .frame(width: 40, height: 40)
-                .overlay(
-                    Text(String(app.name.prefix(1)))
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(theme.palette.onSurfaceVariant)
-                )
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(app.name)
-                    .font(.system(size: 16))
-                    .foregroundColor(theme.palette.onSurface)
-                Text(app.packageName)
-                    .font(.system(size: 12))
-                    .foregroundColor(theme.palette.onSurfaceVariant)
-            }
-            Spacer(minLength: 8)
-            Image(systemName: app.allowSu ? "checkmark.shield.fill" : "shield.slash")
-                .foregroundColor(app.allowSu ? theme.palette.primary : theme.palette.onSurfaceVariant)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(theme.palette.outline.opacity(0.12))
-                .frame(height: 0.5)
-                .padding(.leading, 72)
-        }
+        .background(theme.palette.surface.ignoresSafeArea())
+        .onAppear { mg.load() }
     }
 }
