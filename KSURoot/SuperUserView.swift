@@ -34,7 +34,7 @@ struct SuperUserView: View {
                 }
             }
         }
-        .background(Color.clear)
+        .background(theme.palette.surface)
     }
 }
 
