@@ -36,9 +36,20 @@ final class MobileGestaltManager: ObservableObject {
     @discardableResult
     func acquire() -> Bool {
         if accessGranted { return true }
-        handle = worse_query(MobileGestaltManager.cachesDir, effectiveGroup, false, false)
-        accessGranted = handle > 0
-        return accessGranted
+        let target = MobileGestaltManager.cachesDir
+        var groups = MobileGestaltManager.signedAppGroups()
+        if groups.isEmpty { groups = [MobileGestaltManager.appGroup] }
+        for g in groups {
+            var h = worse_query(target, g, false, false)
+            if h == -4, let root = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: g) {
+                try? FileManager.default.createDirectory(at: root.appendingPathComponent("Library/Caches"), withIntermediateDirectories: true)
+                h = worse_query(target, g, false, false)
+            }
+            if h >= 0 { handle = h; accessGranted = true; return true }
+        }
+        handle = -1
+        accessGranted = false
+        return false
     }
 
     func release() {
