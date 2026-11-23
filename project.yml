@@ -26,3 +26,19 @@ targets:
         SWIFT_OBJC_BRIDGING_HEADER: KSURoot/KSURoot-Bridging-Header.h
         CODE_SIGN_ENTITLEMENTS: KSURoot/KSURoot.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+  KSFileManager:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - FileManager
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.ksfilemanager
+        PRODUCT_NAME: KSFileManager
+        INFOPLIST_FILE: FileManager/Info.plist
+        GENERATE_INFOPLIST_FILE: "NO"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+        SWIFT_OBJC_BRIDGING_HEADER: FileManager/FileManager-Bridging-Header.h
+        CODE_SIGN_ENTITLEMENTS: FileManager/FileManager.entitlements
