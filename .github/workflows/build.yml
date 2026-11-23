@@ -15,29 +15,36 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Build unsigned app (arm64)
+      - name: Build KSURoot
         run: |
-          xcodebuild \
-            -project KSURoot.xcodeproj \
-            -scheme KSURoot \
-            -configuration Release \
-            -sdk iphoneos \
-            -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            build
+          xcodebuild -project KSURoot.xcodeproj -scheme KSURoot \
+            -configuration Release -sdk iphoneos -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
 
-      - name: Package IPA
+      - name: Build KSFileManager
         run: |
-          APP="build/Build/Products/Release-iphoneos/KSURoot.app"
-          test -d "$APP" || { echo "missing .app"; exit 1; }
-          mkdir -p Payload
-          cp -r "$APP" Payload/
+          xcodebuild -project KSURoot.xcodeproj -scheme KSFileManager \
+            -configuration Release -sdk iphoneos -derivedDataPath build2 \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+
+      - name: Package both
+        run: |
+          rm -rf Payload && mkdir Payload
+          cp -r build/Build/Products/Release-iphoneos/KSURoot.app Payload/
           zip -qr KSURoot-unsigned.ipa Payload
-          ls -la KSURoot-unsigned.ipa
+          rm -rf Payload && mkdir Payload
+          cp -r build2/Build/Products/Release-iphoneos/KSFileManager.app Payload/
+          zip -qr KSFileManager-unsigned.ipa Payload
+          ls -la *.ipa
 
-      - name: Upload IPA
+      - name: Upload KSURoot
         uses: actions/upload-artifact@v4
         with:
           name: KSURoot-unsigned-ipa
           path: KSURoot-unsigned.ipa
+
+      - name: Upload KSFileManager
+        uses: actions/upload-artifact@v4
+        with:
+          name: KSFileManager-unsigned-ipa
+          path: KSFileManager-unsigned.ipa
